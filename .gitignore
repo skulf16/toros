@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lokale Datenbank (enthält Secrets & spätere Leads)
+/data/toros.db
+/data/toros.db-shm
+/data/toros.db-wal
