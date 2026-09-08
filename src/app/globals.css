@@ -640,6 +640,7 @@ ul { padding-left: 1.2em; }
 .ftf-summary { background: var(--surface-soft); border-radius: 12px; padding: .7rem .9rem; margin-bottom: .9rem; }
 .ftf-summary-ln { display: flex; justify-content: space-between; font-size: .88rem; padding: .15rem 0; }
 .ftf-summary-ln span { color: var(--ink-mute); }
+.ftf-summary-ln strong { color: var(--cyan-deep); }
 .ftf-field { margin-bottom: .65rem; }
 .ftf-field label { display: block; font-size: .8rem; font-weight: 700; color: var(--ink-mid); margin-bottom: .25rem; }
 .ftf-field input {
