@@ -44,20 +44,23 @@ export default function MotorradLanding() {
             <span className="t-pill">Zwei Räder, ein Ziel</span>
             <h2>Deine Motorrad-Fahrschule für Potsdam und Umgebung</h2>
             <p>
-              Du willst den Motorradführerschein machen — in Potsdam, Nuthetal oder im Umland? Dann bist du
-              bei uns richtig. Unsere Fahrschule liegt in Nuthetal, direkt vor den Toren Potsdams, und die
-              Übungsstrecken kennst du später von deinen ersten eigenen Touren: Landstraßen durch den
-              Fläming, die Autobahnen rund um Potsdam und der Stadtverkehr, in dem du souverän werden willst.
+              Lerne mit uns sicher, die Freiheit auf zwei Rädern zu genießen — in Potsdam, Nuthetal oder im
+              Umland. Unsere Fahrschule liegt direkt am Bahnhof Rehbrücke, top angebunden an Potsdam,
+              Michendorf, Teltow und weitere Ortschaften. Wir starten hier direkt im perfekten
+              Schulungsgebiet: Die ersten Versuche machen wir gleich ungestört bei uns vor der Tür. Danach
+              geht es entweder aus Rehbrücke raus auf wenig befahrene Landstraßen durch den Fläming, auf die
+              Autobahnen rund um Potsdam oder in den Stadtverkehr, in dem unsere Fahrlehrer dich fit machen.
             </p>
             <p>
-              Geschult wird auf einem brandneuen Honda-Fuhrpark: die Hornet für die offene Klasse A, zwei
+              Geschult wird auf einem neuen Honda-Fuhrpark: eine Hornet für die offene Klasse A, zwei
               A2-Maschinen, die CB 125 für A1 und B196 sowie Roller für AM. Alle Maschinen kannst du dir im{" "}
-              <Link href="/#fuhrpark">Fuhrpark auf der Startseite</Link> ansehen. Die Motorrad-Theorie läuft
-              nach festem Plan — wann welches Thema dran ist, steht im <Link href="/theorieplan">Theorieplan</Link>.
+              <Link href="/#fuhrpark">Fuhrpark auf der Startseite</Link> ansehen. Dein Fahrlehrer begleitet
+              dich entweder mit einem Auto oder einem Motorrad, sodass es sich wie eine gemeinsame Ausfahrt
+              anfühlen wird.
             </p>
             <p>
-              Und weil ehrliche Beratung bei uns vor dem Verkauf kommt: Wir sagen dir am Telefon oder nach dem
-              Funnel klar, welche Klasse zu dir passt und was auf dich zukommt — ohne Kleingedrucktes.
+              Theorie findet bei uns täglich statt. Wann genau die Spezialtheorie Motorrad stattfindet,
+              erfährst du in unserem <Link href="/theorieplan">Kalender</Link> oder am Telefon.
             </p>
           </div>
           <div className="t-card t-reveal" data-delay="1">
