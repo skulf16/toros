@@ -1,6 +1,11 @@
 # Build-Konfiguration für Coolify/Nixpacks.
 # better-sqlite3 ist ein natives Modul — falls kein Prebuilt-Binary passt,
 # kompiliert node-gyp beim `npm ci` und braucht dafür Python + Toolchain.
+# better-sqlite3 13.x braucht Node >= 22; ältere Node-Versionen führen zu
+# Segfaults beim Laden des nativen Moduls.
+[variables]
+NIXPACKS_NODE_VERSION = "22"
+
 [phases.setup]
 nixPkgs = ["...", "python3", "gcc", "gnumake"]
 
