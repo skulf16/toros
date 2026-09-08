@@ -3,3 +3,8 @@
 # kompiliert node-gyp beim `npm ci` und braucht dafür Python + Toolchain.
 [phases.setup]
 nixPkgs = ["...", "python3", "gcc", "gnumake"]
+
+# Startbefehl für die Standalone-Ausgabe (next start funktioniert damit nicht).
+# Assets/DB-Symlink werden im "postbuild"-Script von package.json vorbereitet.
+[start]
+cmd = "npm start"
