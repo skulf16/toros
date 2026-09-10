@@ -22,6 +22,9 @@ export default function LeadsLoginSeite() {
             {laedt ? "Anmelden…" : "Anmelden"}
           </button>
         </form>
+        <p className="a-hinweis" style={{ marginTop: "1rem", textAlign: "center" }}>
+          <a href="/leads/passwort-reset">Passwort vergessen?</a>
+        </p>
       </div>
     </div>
   );

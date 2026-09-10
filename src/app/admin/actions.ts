@@ -2,11 +2,13 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db, getSetting, setSetting, verifyPassword, hashPassword, SETTINGS_DEFAULTS, type AktionsBanner } from "@/lib/db";
 import { FUNNEL_DEFAULT, type FunnelConfig } from "@/lib/funnel-default";
+import { leadMailSenden, resetMailSenden } from "@/lib/mail";
 import { istEingeloggt, loginSetzen, logout } from "@/lib/session";
 
 /** Wirft jede nicht eingeloggte Anfrage raus — Pflicht in jeder Action. */
@@ -51,6 +53,113 @@ export async function leadsLogoutAction() {
   redirect("/leads/login");
 }
 
+/* --------------------------- Passwort-Reset ------------------------- */
+
+const RESET_GUELTIG_MIN = 30;
+
+/** Je Bereich: wo Token und Passwort liegen, wohin der Link zeigt, wer die Mail bekommt. */
+const RESET_KONFIG = {
+  admin: {
+    tokenKey: "admin_reset",
+    passwortKey: "admin_passwort",
+    pfad: "/admin/passwort-reset",
+    empfaengerKey: "lead_empfaenger",
+    label: "Admin-Bereich",
+  },
+  leads: {
+    tokenKey: "leads_reset",
+    passwortKey: "leads_passwort",
+    pfad: "/leads/passwort-reset",
+    empfaengerKey: "leads_reset_empfaenger",
+    label: "Leads-Panel",
+  },
+} as const;
+
+type ResetBereich = keyof typeof RESET_KONFIG;
+
+function resetTokenHash(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+async function resetAnfordern(bereich: ResetBereich) {
+  const konfig = RESET_KONFIG[bereich];
+  const token = randomBytes(32).toString("hex");
+  setSetting(
+    konfig.tokenKey,
+    JSON.stringify({ hash: resetTokenHash(token), ablauf: Date.now() + RESET_GUELTIG_MIN * 60_000 })
+  );
+
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("host") ?? "localhost:3300";
+  const link = `${proto}://${host}${konfig.pfad}?token=${token}`;
+
+  const empfaenger = getSetting(konfig.empfaengerKey)
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+
+  try {
+    await resetMailSenden(link, RESET_GUELTIG_MIN, empfaenger, konfig.label);
+  } catch (e) {
+    console.error(`[Passwort-Reset ${konfig.label}] Mail-Versand fehlgeschlagen:`, e);
+    return { fehler: "Die E-Mail konnte nicht verschickt werden — bitte später erneut versuchen." };
+  }
+  return {
+    ok: `Der Reset-Link wurde an die hinterlegte Empfänger-Adresse geschickt und ist ${RESET_GUELTIG_MIN} Minuten gültig.`,
+  };
+}
+
+async function resetDurchfuehren(bereich: ResetBereich, formData: FormData) {
+  const konfig = RESET_KONFIG[bereich];
+  const token = String(formData.get("token") ?? "");
+  const neu = String(formData.get("passwort") ?? "");
+  const wiederholung = String(formData.get("wiederholung") ?? "");
+
+  let daten: { hash?: string; ablauf?: number } = {};
+  try {
+    daten = JSON.parse(getSetting(konfig.tokenKey));
+  } catch {
+    // kein offener Reset
+  }
+  const probe = token ? resetTokenHash(token) : "";
+  const gueltig =
+    !!daten.hash &&
+    Number(daten.ablauf) > Date.now() &&
+    probe.length === daten.hash.length &&
+    timingSafeEqual(Buffer.from(probe), Buffer.from(daten.hash));
+
+  if (!gueltig) {
+    return { fehler: "Der Link ist ungültig oder abgelaufen — bitte einen neuen anfordern." };
+  }
+  if (neu.length < 8) {
+    return { fehler: "Das neue Passwort braucht mindestens 8 Zeichen." };
+  }
+  if (neu !== wiederholung) {
+    return { fehler: "Die beiden Passwörter stimmen nicht überein." };
+  }
+
+  setSetting(konfig.passwortKey, hashPassword(neu));
+  setSetting(konfig.tokenKey, "{}"); // Token ist verbraucht
+  return { ok: true };
+}
+
+export async function passwortResetAnfordernAction(_: unknown, _formData: FormData) {
+  return resetAnfordern("admin");
+}
+
+export async function passwortResetAction(_: unknown, formData: FormData) {
+  return resetDurchfuehren("admin", formData);
+}
+
+export async function leadsPasswortResetAnfordernAction(_: unknown, _formData: FormData) {
+  return resetAnfordern("leads");
+}
+
+export async function leadsPasswortResetAction(_: unknown, formData: FormData) {
+  return resetDurchfuehren("leads", formData);
+}
+
 /* ------------------------------ Leads ------------------------------ */
 
 export async function leadStatusAction(formData: FormData) {
@@ -65,6 +174,58 @@ export async function leadLoeschenAction(formData: FormData) {
   await leadsPruefen();
   db().prepare("DELETE FROM leads WHERE id = ?").run(Number(formData.get("id")));
   revalidatePath("/leads");
+}
+
+/** Schickt die Benachrichtigungs-Mail zu einem Lead erneut an die Empfänger-Adresse(n). */
+export async function leadMailErneutSendenAction(formData: FormData) {
+  await leadsPruefen();
+  const id = Number(formData.get("id"));
+  const lead = db().prepare("SELECT * FROM leads WHERE id = ?").get(id) as
+    | {
+        id: number;
+        kategorie: string;
+        klasse: string;
+        startwunsch: string;
+        altersgruppe: string;
+        vorname: string;
+        nachname: string;
+        telefon: string;
+        email: string;
+      }
+    | undefined;
+  if (!lead) {
+    redirect("/leads?fehler=" + encodeURIComponent("Lead nicht gefunden."));
+  }
+
+  let verschickt = false;
+  let fehlgeschlagen = false;
+  try {
+    verschickt = await leadMailSenden({
+      id: lead!.id,
+      kategorie: lead!.kategorie,
+      klasse: lead!.klasse,
+      start: lead!.startwunsch,
+      alter: lead!.altersgruppe,
+      vorname: lead!.vorname,
+      nachname: lead!.nachname,
+      telefon: lead!.telefon,
+      email: lead!.email,
+    });
+  } catch (e) {
+    console.error(`[Lead #${id}] Erneuter Mail-Versand fehlgeschlagen:`, e);
+    fehlgeschlagen = true;
+  }
+
+  if (fehlgeschlagen) {
+    redirect("/leads?fehler=" + encodeURIComponent("Der Versand ist fehlgeschlagen — bitte später erneut versuchen."));
+  }
+  if (!verschickt) {
+    redirect(
+      "/leads?fehler=" +
+        encodeURIComponent("Es ist kein Mail-Versand konfiguriert (SMTP bzw. Empfänger-Adresse fehlt).")
+    );
+  }
+  redirect("/leads?ok=" + encodeURIComponent(`Die Mail zu Lead #${id} wurde erneut verschickt.`));
 }
 
 export async function kontaktStatusAction(formData: FormData) {

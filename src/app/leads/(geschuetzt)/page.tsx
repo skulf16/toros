@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { leadStatusAction, leadLoeschenAction } from "@/app/admin/actions";
+import { leadStatusAction, leadLoeschenAction, leadMailErneutSendenAction } from "@/app/admin/actions";
 
 type Lead = {
   id: number;
@@ -18,7 +18,12 @@ type Lead = {
 
 export const metadata = { title: "Leads" };
 
-export default function LeadsSeite() {
+export default async function LeadsSeite({
+  searchParams,
+}: {
+  searchParams: Promise<{ ok?: string; fehler?: string }>;
+}) {
+  const params = await searchParams;
   const leads = db()
     .prepare("SELECT * FROM leads ORDER BY id DESC LIMIT 500")
     .all() as Lead[];
@@ -29,6 +34,8 @@ export default function LeadsSeite() {
       <h1>
         Leads {neu > 0 ? <span className="badge badge--neu">{neu} neu</span> : null}
       </h1>
+      {params.ok ? <div className="a-meldung">{params.ok}</div> : null}
+      {params.fehler ? <div className="a-fehler">{params.fehler}</div> : null}
       <div className="admin-card">
         {leads.length === 0 ? (
           <p className="a-hinweis">Noch keine Leads — sobald jemand den Führerschein-Check absendet, erscheint er hier.</p>
@@ -81,6 +88,12 @@ export default function LeadsSeite() {
                         />
                         <button className="a-btn" type="submit">
                           {l.status === "neu" ? "✓ Kontaktiert" : "↩ Als neu"}
+                        </button>
+                      </form>{" "}
+                      <form action={leadMailErneutSendenAction} style={{ display: "inline" }}>
+                        <input type="hidden" name="id" value={l.id} />
+                        <button className="a-btn" type="submit" title="Benachrichtigungs-Mail erneut verschicken">
+                          ✉ Mail erneut
                         </button>
                       </form>{" "}
                       <form action={leadLoeschenAction} style={{ display: "inline" }}>

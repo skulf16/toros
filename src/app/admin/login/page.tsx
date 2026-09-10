@@ -22,6 +22,9 @@ export default function LoginSeite() {
             {laedt ? "Anmelden…" : "Anmelden"}
           </button>
         </form>
+        <p className="a-hinweis" style={{ marginTop: "1rem", textAlign: "center" }}>
+          <a href="/admin/passwort-reset">Passwort vergessen?</a>
+        </p>
       </div>
     </div>
   );

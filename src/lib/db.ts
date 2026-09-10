@@ -105,6 +105,8 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   anmeldung_url:
     "https://api.fahrschulmanager.de/v1/onlineanmeldung/authenticate?t=9hTxOwLLp18s8ipLXDNBjhkepZlg8GhVk6kVjrLGxvYbBVhov%2Bp39%2FaL3zd59CHoGTBbD2P7oXsaeslhkDK7jw%3D%3D",
   lead_empfaenger: "kontakt@fahrschuletoros.de",
+  // Empfänger für den Passwort-Reset des Leads-Panels (Admin-Reset geht an lead_empfaenger)
+  leads_reset_empfaenger: "theis@fluks.media",
   // Unterrichtszeiten je Wochentag (1=Mo … 7=So), leer = kein Unterricht
   unterrichtszeiten: JSON.stringify({
     1: { start: "18:00", ende: "19:30" },
