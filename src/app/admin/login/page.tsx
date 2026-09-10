@@ -18,6 +18,10 @@ export default function LoginSeite() {
             Passwort
             <input type="password" name="passwort" required autoFocus autoComplete="current-password" />
           </label>
+          <label className="a-check">
+            <input type="checkbox" name="dauerhaft" value="1" defaultChecked />
+            Angemeldet bleiben (90 Tage)
+          </label>
           <button className="t-btn t-btn--dark" type="submit" disabled={laedt}>
             {laedt ? "Anmelden…" : "Anmelden"}
           </button>

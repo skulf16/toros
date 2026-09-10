@@ -44,26 +44,26 @@ export default function KontaktSeite() {
               <tbody>
                 {anfragen.map((a) => (
                   <tr key={a.id}>
-                    <td>{a.created_at.replace("T", " ").slice(0, 16)}</td>
-                    <td>
+                    <td data-label="Datum">{a.created_at.replace("T", " ").slice(0, 16)}</td>
+                    <td data-label="Status">
                       <span className={`badge ${a.status === "neu" ? "badge--neu" : "badge--ok"}`}>
                         {a.status === "neu" ? "Neu" : "Erledigt"}
                       </span>
                     </td>
-                    <td>{a.thema || "—"}</td>
-                    <td>
+                    <td data-label="Thema">{a.thema || "—"}</td>
+                    <td data-label="Name">
                       <strong>
                         {a.vorname} {a.nachname}
                       </strong>
                       {a.alter_jahre ? <> ({a.alter_jahre})</> : null}
                     </td>
-                    <td>
+                    <td data-label="Kontakt">
                       <a href={`mailto:${a.email}`}>{a.email}</a>
                       <br />
                       <a href={"tel:" + a.telefon.replace(/[^\d+]/g, "")}>{a.telefon}</a>
                     </td>
-                    <td style={{ maxWidth: 320, whiteSpace: "pre-wrap" }}>{a.nachricht || "—"}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td data-label="Nachricht" style={{ maxWidth: 320, whiteSpace: "pre-wrap" }}>{a.nachricht || "—"}</td>
+                    <td className="t-nowrap">
                       <form action={kontaktStatusAction} style={{ display: "inline" }}>
                         <input type="hidden" name="id" value={a.id} />
                         <input

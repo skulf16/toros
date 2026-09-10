@@ -29,7 +29,7 @@ export async function loginAction(_: unknown, formData: FormData) {
   if (!passwort || !verifyPassword(passwort, gespeichert)) {
     return { fehler: "Falsches Passwort." };
   }
-  await loginSetzen("admin");
+  await loginSetzen("admin", formData.get("dauerhaft") === "1");
   redirect("/admin/termine");
 }
 
@@ -44,7 +44,7 @@ export async function leadsLoginAction(_: unknown, formData: FormData) {
   if (!passwort || !verifyPassword(passwort, gespeichert)) {
     return { fehler: "Falsches Passwort." };
   }
-  await loginSetzen("leads");
+  await loginSetzen("leads", formData.get("dauerhaft") === "1");
   redirect("/leads");
 }
 

@@ -18,7 +18,9 @@ export default async function LeadsLayout({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/logo.png" alt="Fahrschule Toros" />
         </Link>
-        <LeadsNavLinks />
+        <div className="nav-links">
+          <LeadsNavLinks />
+        </div>
         <div className="unten">
           <form action={leadsLogoutAction}>
             <button className="a-btn" type="submit">Abmelden</button>
@@ -26,6 +28,9 @@ export default async function LeadsLayout({
         </div>
       </nav>
       <div className="admin-main">{children}</div>
+      <nav className="admin-tabbar" aria-label="Leads-Navigation (mobil)">
+        <LeadsNavLinks />
+      </nav>
     </div>
   );
 }

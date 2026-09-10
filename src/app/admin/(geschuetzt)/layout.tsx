@@ -18,7 +18,9 @@ export default async function AdminLayout({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/logo.png" alt="Fahrschule Toros" />
         </Link>
-        <AdminNavLinks />
+        <div className="nav-links">
+          <AdminNavLinks />
+        </div>
         <div className="unten">
           <form action={logoutAction}>
             <button className="a-btn" type="submit">Abmelden</button>
@@ -26,6 +28,9 @@ export default async function AdminLayout({
         </div>
       </nav>
       <div className="admin-main">{children}</div>
+      <nav className="admin-tabbar" aria-label="Admin-Navigation (mobil)">
+        <AdminNavLinks />
+      </nav>
     </div>
   );
 }

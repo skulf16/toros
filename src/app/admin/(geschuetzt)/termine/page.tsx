@@ -163,16 +163,16 @@ export default async function TermineSeite({
             <tbody>
               {kommende.map((t) => (
                 <tr key={t.id}>
-                  <td>{formatDatum(t.datum)}{t.datum === heute ? " · heute" : ""}</td>
-                  <td>
+                  <td data-label="Datum">{formatDatum(t.datum)}{t.datum === heute ? " · heute" : ""}</td>
+                  <td data-label="Uhrzeit">
                     {t.start} – {t.ende}
                   </td>
-                  <td>
+                  <td data-label="Thema">
                     <strong>{t.thema}</strong>
                   </td>
-                  <td>{t.ort}</td>
-                  <td>{t.hinweis || "—"}</td>
-                  <td style={{ whiteSpace: "nowrap" }}>
+                  <td data-label="Ort">{t.ort}</td>
+                  <td data-label="Hinweis">{t.hinweis || "—"}</td>
+                  <td className="t-nowrap">
                     <a className="a-btn" href={`/admin/termine?bearbeiten=${t.id}`}>
                       Bearbeiten
                     </a>{" "}

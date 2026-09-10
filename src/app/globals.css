@@ -824,12 +824,17 @@ ul { padding-left: 1.2em; }
 .admin-nav .logo { margin: 0 0 1.4rem .4rem; }
 .admin-nav .logo img { height: 44px; width: auto; filter: brightness(0) invert(1); opacity: .9; }
 .admin-nav a {
-  display: block; color: #c8d6da; text-decoration: none; font-weight: 600;
+  display: flex; align-items: center; gap: .6rem;
+  color: #c8d6da; text-decoration: none; font-weight: 600;
   padding: .55rem .8rem; border-radius: 10px; margin-bottom: .2rem; font-size: .95rem;
 }
+.admin-nav a svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.admin-nav a .nav-kurz, .admin-tabbar a .nav-lang { display: none; }
 .admin-nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
 .admin-nav a.aktiv { background: var(--mint); color: var(--ink); }
 .admin-nav .unten { margin-top: 2rem; border-top: 1px solid rgba(255,255,255,.12); padding-top: 1rem; }
+/* Mobile Bottom-Tab-Navigation — auf dem Desktop unsichtbar */
+.admin-tabbar { display: none; }
 .admin-main { padding: clamp(1.4rem, 3vw, 2.6rem); max-width: 1100px; }
 .admin-main h1 { font-size: 1.7rem; color: var(--ink); }
 .admin-card { background: #fff; border-radius: 14px; box-shadow: var(--shadow-soft); padding: 1.4rem; margin-bottom: 1.4rem; }
@@ -873,9 +878,76 @@ ul { padding-left: 1.2em; }
 .login-shell { min-height: 100vh; display: grid; place-items: center; background: var(--ink-2); }
 .login-card { background: #fff; border-radius: 18px; box-shadow: var(--shadow-lift); padding: 2.2rem; width: min(400px, 92vw); }
 .login-card img { height: 56px; margin: 0 auto 1.2rem; }
+.t-nowrap { white-space: nowrap; }
+
+/* --- Mobil: App-Gefühl — Topbar, Bottom-Tabs, Karten statt Tabellen --- */
 @media (max-width: 860px) {
   .admin-shell { grid-template-columns: 1fr; }
-  .admin-nav { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+
+  /* Sidebar wird zur schmalen Topbar: Logo links, Abmelden rechts */
+  .admin-nav {
+    display: flex; align-items: center; gap: .3rem;
+    padding: calc(.6rem + env(safe-area-inset-top)) 1rem .6rem;
+    position: sticky; top: 0; z-index: 40;
+  }
   .admin-nav .logo { margin: 0 1rem 0 0; }
+  .admin-nav .logo img { height: 34px; }
+  .admin-nav .nav-links { display: none; }
   .admin-nav .unten { margin: 0 0 0 auto; border: 0; padding: 0; }
+  .admin-nav .unten .a-btn { background: transparent; color: #c8d6da; border-color: rgba(255,255,255,.25); }
+
+  /* Bottom-Tab-Bar mit Icons, über dem Home-Indicator */
+  .admin-tabbar {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--ink-2); border-top: 1px solid rgba(255,255,255,.12);
+    padding: .3rem .4rem calc(.3rem + env(safe-area-inset-bottom));
+  }
+  .admin-tabbar a {
+    display: flex; flex-direction: column; align-items: center; gap: .2rem;
+    min-height: 52px; justify-content: center;
+    color: #c8d6da; text-decoration: none; font-size: .68rem; font-weight: 600;
+    letter-spacing: .02em; border-radius: 10px; padding: .25rem 0;
+  }
+  .admin-tabbar a svg { width: 23px; height: 23px; }
+  .admin-tabbar a.aktiv { color: var(--mint); }
+
+  .admin-main {
+    max-width: none;
+    padding: 1.1rem 1rem calc(84px + env(safe-area-inset-bottom));
+  }
+  .admin-main h1 { font-size: 1.4rem; }
+  .admin-card { padding: 1rem; border-radius: 12px; }
+
+  /* Touch-Größen: Buttons und Felder mind. 44px hoch */
+  .a-btn { min-height: 44px; padding: .5em 1em; font-size: .92rem; }
+  .a-form input, .a-form select, .a-form textarea { min-height: 44px; font-size: 1rem; }
+  .a-zeile { grid-template-columns: 1fr 1fr; }
+
+  /* Tabellen werden zu Karten */
+  .admin-tabelle, .admin-tabelle tbody, .admin-tabelle tr, .admin-tabelle td { display: block; }
+  .admin-tabelle thead { display: none; }
+  .admin-tabelle tr {
+    border: 1px solid #e3eaec; border-radius: 12px; background: #fff;
+    padding: .55rem .85rem; margin-bottom: .75rem;
+  }
+  .admin-tabelle tr:hover td { background: transparent; }
+  .admin-tabelle td {
+    border: 0; padding: .28rem 0;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  }
+  .admin-tabelle td[data-label]::before {
+    content: attr(data-label);
+    font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 700; flex: 0 0 auto;
+  }
+  .admin-tabelle td:last-child {
+    justify-content: flex-start; flex-wrap: wrap; gap: .5rem;
+    border-top: 1px solid #eef2f3; margin-top: .35rem; padding-top: .6rem;
+    white-space: normal;
+  }
+  .t-nowrap { white-space: normal; }
+}
+@media (max-width: 440px) {
+  .a-zeile { grid-template-columns: 1fr; }
 }

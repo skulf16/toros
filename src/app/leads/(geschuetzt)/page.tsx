@@ -59,26 +59,26 @@ export default async function LeadsSeite({
               <tbody>
                 {leads.map((l) => (
                   <tr key={l.id}>
-                    <td>{l.created_at.replace("T", " ").slice(0, 16)}</td>
-                    <td>
+                    <td data-label="Datum">{l.created_at.replace("T", " ").slice(0, 16)}</td>
+                    <td data-label="Status">
                       <span className={`badge ${l.status === "neu" ? "badge--neu" : "badge--ok"}`}>
                         {l.status === "neu" ? "Neu" : "Kontaktiert"}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Name">
                       <strong>
                         {l.vorname} {l.nachname}
                       </strong>
                     </td>
-                    <td>
+                    <td data-label="Telefon">
                       <a href={"tel:" + l.telefon.replace(/[^\d+]/g, "")}>{l.telefon}</a>
                     </td>
-                    <td>{l.email ? <a href={`mailto:${l.email}`}>{l.email}</a> : "—"}</td>
-                    <td>{l.kategorie}</td>
-                    <td>{l.klasse}</td>
-                    <td>{l.startwunsch}</td>
-                    <td>{l.altersgruppe}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td data-label="E-Mail">{l.email ? <a href={`mailto:${l.email}`}>{l.email}</a> : "—"}</td>
+                    <td data-label="Kategorie">{l.kategorie}</td>
+                    <td data-label="Klasse">{l.klasse}</td>
+                    <td data-label="Start">{l.startwunsch}</td>
+                    <td data-label="Alter">{l.altersgruppe}</td>
+                    <td className="t-nowrap">
                       <form action={leadStatusAction} style={{ display: "inline" }}>
                         <input type="hidden" name="id" value={l.id} />
                         <input
