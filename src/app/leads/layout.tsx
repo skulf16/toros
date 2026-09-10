@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   icons: {
     apple: "/img/app-icon-180.png",
   },
+  // Ältere iOS-Versionen kennen nur das apple-Präfix; Next 16 schreibt sonst
+  // nur das neutrale mobile-web-app-capable.
+  other: { "apple-mobile-web-app-capable": "yes" },
 };
 
 export const viewport: Viewport = {

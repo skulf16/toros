@@ -3,7 +3,7 @@
   "short_name": "Toros Admin",
   "description": "Website-Pflege der Fahrschule Toros: Theorietermine, Aktionen, Erfolgsgeschichten, Einstellungen.",
   "id": "/admin",
-  "start_url": "/admin/termine",
+  "start_url": "/admin/galerie",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
